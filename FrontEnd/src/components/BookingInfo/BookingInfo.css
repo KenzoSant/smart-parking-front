@@ -1,0 +1,27 @@
+.booking-info {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: #000;
+    color: white;
+    border-radius: 10px;
+    margin: 20px;
+}
+
+.booking-time {
+    text-align: center;
+}
+
+.find-location-btn {
+    background-color: #00C853;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.find-location-btn:hover {
+    background-color: #00A046;
+}
