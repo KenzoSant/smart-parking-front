@@ -4,15 +4,18 @@ import './BookingInfo.css';
 const BookingInfo = () => {
   return (
     <div className="booking-info">
-      <div className="booking-time">
-        <span>Kedatangan</span>
-        <p>Hari ini, <strong>10.30</strong></p>
+      <div className="booking-content">
+        <div className="booking-time">
+          <span>Local Atual</span>
+          <p>Entrada <strong>00:00</strong></p>
+        </div>
+        <div className="booking-time">
+          <span>Local Atual</span>
+          <p>Saida <strong>00:00</strong></p>
+        </div>
       </div>
-      <div className="booking-time">
-        <span>Diambil</span>
-        <p>Besok, <strong>09.30</strong></p>
-      </div>
-      <button className="find-location-btn">Cari Tempat</button>
+      
+      <button className="find-location-btn">Pagamento</button>
     </div>
   );
 };

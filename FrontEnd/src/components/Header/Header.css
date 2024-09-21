@@ -1,15 +1,19 @@
-.header {
-    padding: 20px;
-    background-color: white;
-    border-bottom: 1px solid #eee;
+/* ========== HEADER ========== */
+header {
+    height: var(--header-height);
+    background-color: var(--background-color);
+    color: var(--primary-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
 }
 
-.header h2 {
-    margin: 0;
-    font-size: 24px;
+header h2 {
+    font-size: var(--h2-font-size);
+    color: var(--primary-color);
 }
 
-.header p {
-    margin: 5px 0;
-    color: gray;
+header span {
+    color: var(--second-color);
 }

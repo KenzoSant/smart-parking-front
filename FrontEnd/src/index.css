@@ -1,150 +1,105 @@
-/* Reseta algumas propriedades padrão */
+/* ========== GOOGLE FONT ========== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+:root {
+  --header-height: 3.5rem;
+
+  --first-hue: 250;
+  --sat: 66%;
+  --lig: 75%;
+  --second-hue: 219;
+
+  /* ========== GOOGLE FONT ========== */
+  --primary-color: #ffff;
+  --primary-color-dark: #000;
+  --second-color: #ff890c;
+  --second-color-hover: #d66f00;
+  --second-color-dark: #000000;
+  --background-color: #363640;
+  --background-color-transparent: #363640cb;
+
+  --detail-color: #5cccbd;
+  --detail-second-color: #96afc2;
+  --grey-color-dark: #77767B;
+
+  /* ========== FONT ========== */
+  --kami-font: 'kamikaze-font', sans-serif;
+  --body-font: 'Poppins', sans-serif;
+  --biggest-font-size: 2rem;
+  --h1-font-size: 1.75rem;
+  --h2-font-size: 1.5rem;
+  --h3-font-size: 1.25rem;
+  --normal-font-size: 1.1rem;
+  --small-font-size: .812rem;
+  --smaller-font-size: .75rem;
+  --tiny-font-size: .625rem;
+
+  /* ========== FONT WEIGHT ========== */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+
+  /* ========== Z-INDEX ========== */
+  --z-tooltip: 10;
+  --z-fixed: 100;
+  --z-modal: 1000;
+}
+
+/* ========== BASE ========== */
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
-/* Estilos gerais */
+html {
+  scroll-behavior: smooth;
+}
+
+body,
+button,
+input,
+textarea {
+  font-family: var(--body-font);
+  font-size: var(--normal-font-size);
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
+  color: var(--primary-color);
+  background-color: var(--background-color);
 }
 
-/* Container principal */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+h1,
+h2,
+h3 {
+  color: var(--primary-color);
+  font-weight: var(--font-semibold);
 }
 
-/* Cabeçalho */
-header {
-  background-color: #fff;
-  padding: 10px 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+ul {
+  list-style: none;
 }
 
-header h1 {
-  font-size: 1.5rem;
+a {
+  text-decoration: none;
+  color: var(--second-color);
 }
 
-header .user-info {
-  display: flex;
-  align-items: center;
+a:hover {
+  color: var(--second-color-dark);
 }
 
-header .user-info img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-header .user-info .greeting {
-  font-size: 1rem;
-}
-
-/* Menu de Exploração */
-.explore-menu {
-  display: flex;
-  justify-content: space-between;
-  margin: 20px 0;
-}
-
-.explore-menu button {
-  background-color: #00b894;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
+button {
   cursor: pointer;
-  font-size: 1rem;
+  border: none;
+  outline: none;
 }
 
-.explore-menu button:hover {
-  background-color: #019473;
+img {
+  max-width: 100%;
+  height: auto;
 }
 
-/* Lista de comida (ou itens gerais) */
-.food-display {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
 
-.food-display .food-item {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
 
-.food-display .food-item img {
-  width: 100%;
-  border-radius: 8px;
-}
 
-.food-display .food-item h3 {
-  margin: 10px 0;
-  font-size: 1.25rem;
-}
-
-.food-display .food-item p {
-  font-size: 0.9rem;
-  color: #777;
-}
-
-/* Rodapé */
-footer {
-  background-color: #fff;
-  padding: 20px;
-  text-align: center;
-  border-top: 1px solid #ddd;
-  margin-top: 20px;
-}
-
-/* Estilos específicos para dispositivos móveis */
-@media (max-width: 768px) {
-  .explore-menu {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .explore-menu button {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-
-  .food-display {
-    grid-template-columns: 1fr;
-  }
-
-  header h1 {
-    font-size: 1.25rem;
-  }
-
-  header .user-info .greeting {
-    font-size: 0.9rem;
-  }
-}
-
-/* Estilos específicos para telas grandes (computadores) */
-@media (min-width: 769px) {
-  .food-display {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  header h1 {
-    font-size: 2rem;
-  }
-
-  header .user-info .greeting {
-    font-size: 1.25rem;
-  }
-}

@@ -4,8 +4,8 @@ import './Header.css';
 const Header = () => {
   return (
     <header className="header">
-      <h2>Pagi, Emir Abiyyu! 👋</h2>
-      <p>Sabtu, 25 Maret 2023</p>
+      <h2>Ola, <span>Nome</span> ! 👋</h2>
+      <p>Sexta, 25 Ago 2024</p>
     </header>
   );
 };

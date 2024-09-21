@@ -4,12 +4,14 @@ import SearchBar from '../../components/SearchBar/SearchBar';
 import BookingInfo from '../../components/BookingInfo/BookingInfo';
 import LocationDisplay from '../../components/LocationDisplay/LocationDisplay';
 
+import './Home.css'
+
 const Home = () => {
   return (
     <div>
       <Header />
       <BookingInfo />
-      <SearchBar />
+      {/* <SearchBar /> */}
       <LocationDisplay />
     </div>
   );
