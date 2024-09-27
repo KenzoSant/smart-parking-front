@@ -14,8 +14,10 @@ const User = () => {
     <div className='user'>
       <Header />
       <div className="user-container">
-        {user ? <UserPage /> : <UserLog />}
-      </div>
+        {/* {user ? <UserPage /> : <UserLog />} */}
+        <UserPage />
+      </div> 
+      
     </div>
   );
 };

@@ -5,7 +5,7 @@ import { assets } from '../../assets/js/assets';
 const LocationDisplay = () => {
   return (
     <div className="location-display">
-      <h1>Estacionamentos utilizados</h1>
+      <h1>Estacionamentos mais utilizados</h1>
       <div className="location">
         <img src={assets.img1} alt="North Excelsior District" />
         <div className="location-info">
