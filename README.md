@@ -1,4 +1,4 @@
-# :ocean: Smart-Parking (Front-end)
+# :car: Smart-Parking (Front-end)
 
 ## Smart-Parking
 - Projeto desenvolvido para TGI.
@@ -12,11 +12,12 @@
 - Logo após baixar este projeto e rodar os seguintes comandos
   - npm install
   - npm run dev
+##
 
-<img src="https://github.com/user-attachments/assets/df7435dd-6840-4236-8ee3-b2853eec3d23" alt="descrição" width="250"/>
-<img src="https://github.com/user-attachments/assets/b59a4596-c431-44c4-b4dc-6879a1001b7d" alt="descrição" width="250"/>
-<img src="https://github.com/user-attachments/assets/058e37eb-d3d6-4a02-a968-fb489624f70c" alt="descrição" width="250"/>
-<img src="https://github.com/user-attachments/assets/0800c097-a90f-4584-aa24-cf02a66dcfe5" alt="descrição" width="250"/>
-
+## Imagens do projeto
+<img src="https://github.com/user-attachments/assets/9a4315a9-5646-4401-82ca-ff203bce14bf" alt="descrição" width="200"/>
+<img src="https://github.com/user-attachments/assets/058e37eb-d3d6-4a02-a968-fb489624f70c" alt="descrição" width="200"/>
+<img src="https://github.com/user-attachments/assets/62dbdc49-4e2f-4144-abf9-47fe0bf5cf85" alt="descrição" width="200"/>
+<img src="https://github.com/user-attachments/assets/df7435dd-6840-4236-8ee3-b2853eec3d23" alt="descrição" width="200"/>
 
 
