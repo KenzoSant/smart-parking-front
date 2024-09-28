@@ -3,7 +3,7 @@ import { AuthContext } from '../../context/AuthProvider'; // Ajuste o caminho se
 import styles from './UserLog.module.css'; // Importação correta dos estilos
 
 const UserLog = () => {
-  const { login, register, error, loading } = useContext(AuthContext);
+  const { login, register, error, loading, success } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -87,6 +87,7 @@ const UserLog = () => {
       </form>
 
       {error && <p className={styles.error}>{error}</p>}
+      {success && <p className={styles.success}>{success}</p>}
 
       <button className={styles.toggleButton} onClick={toggleForm}>
         {isLogin ? 'Não tem uma conta? Cadastre-se' : 'Já tem uma conta? Faça Login'}

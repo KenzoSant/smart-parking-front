@@ -11,7 +11,7 @@ const Nav = () => {
       <ul>
         {/* Aplicando uma classe "active" ao item de navegação com base na rota */}
         <li className={location.pathname === '/' ? 'active' : ''}>
-          <Link to="/"><img src={assets.home} alt="Home" /></Link>
+          <Link to="/home"><img src={assets.home} alt="Home" /></Link>
         </li>
         <li className={location.pathname === '/pagar' ? 'active' : ''}>
           <Link to="/pagar"><img src={assets.pagar} alt="Pagar" /></Link>
