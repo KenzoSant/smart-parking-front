@@ -1,13 +1,15 @@
 import React, { useContext, useState } from 'react';
-import { AuthContext } from '../../context/AuthProvider'; // Ajuste o caminho se necessário
-import styles from './UserLog.module.css'; // Importação correta dos estilos
+import { AuthContext } from '../../context/AuthProvider'; 
+import styles from './UserLog.module.css';
+import { useNavigate } from 'react-router-dom';  
 
 const UserLog = () => {
   const { login, register, error, loading, success } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [isLogin, setIsLogin] = useState(true); // Estado para alternar entre login e cadastro
+  const [isLogin, setIsLogin] = useState(true); 
+  const navigate = useNavigate();
 
   // Função para alternar entre Login e Cadastro
   const toggleForm = () => {
@@ -36,6 +38,7 @@ const UserLog = () => {
   const handleRegister = () => {
     register(name, email, password);
   };
+  
 
   return (
     <div className={styles.container}>
@@ -92,6 +95,11 @@ const UserLog = () => {
       <button className={styles.toggleButton} onClick={toggleForm}>
         {isLogin ? 'Não tem uma conta? Cadastre-se' : 'Já tem uma conta? Faça Login'}
       </button>
+
+      <button className={styles.toggleButton} onClick={() => navigate('/forgot-password')}>
+        Esqueceu a senha?
+      </button>
+
     </div>
   );
 };

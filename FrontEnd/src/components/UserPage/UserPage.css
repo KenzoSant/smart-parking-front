@@ -95,7 +95,7 @@
 }
 
 /* Botão de logout */
-.logout-button {
+.logout-button, .alterar{
   padding: 10px 20px;
   background-color: #dc3545;
   color: white;
@@ -109,4 +109,22 @@
 
 .logout-button:hover {
   background-color: #c82333;
+}
+
+.alterar {
+  background-color: var(--second-color);
+  margin-bottom: 0;
+  margin-top:1rem;
+}
+
+.logout-button:hover {
+  background-color: var(--second-color-hover);
+}
+
+input {
+  margin-top: 15px;
+  border: 2px solid var(--second-color);
+  border-radius: 10px;
+  padding: 10px; 
+  height: 40px; 
 }

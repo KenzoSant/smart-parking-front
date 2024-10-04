@@ -22,8 +22,13 @@ const PaymentPage = () => {
                     </div>
 
                     <div className={styles.field}>
-                        <label>Nome do Carro:</label>
-                        <p>Fusca Azul</p>
+                        <label>Carro:</label>
+                        <p>Gol</p>
+                    </div>
+
+                    <div className={styles.field}>
+                        <label>Placa:</label>
+                        <p>NOP0Q12</p>
                     </div>
 
                     <div className={styles.field}>

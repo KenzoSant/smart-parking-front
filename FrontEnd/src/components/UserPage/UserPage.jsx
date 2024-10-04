@@ -5,20 +5,27 @@ import './UserPage.css';
 const UserPage = () => {
   const { user, logout, createVehicle, vehicles, fetchVehicles } = useContext(AuthContext); // Obtém os veículos do contexto
   const [vehicle, setVehicle] = useState({ make: '', model: '', plate: '', year: '', color: '' });
+  const { changePassword, loading, error, success } = useContext(AuthContext);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   useEffect(() => {
     if (user && user.token) {
-      fetchVehicles(); // Busca os veículos quando o usuário estiver logado
+      fetchVehicles(); 
     }
   }, [user, fetchVehicles]);
 
   const handleAddVehicle = async () => {
     try {
       await createVehicle(vehicle); // Adiciona o veículo
-      setVehicle({ make: '', model: '', plate: '', year: '', color: '' }); // Limpa o formulário
+      setVehicle({ make: '', model: '', plate: '', year: '', color: '' });
     } catch (error) {
       console.error('Erro ao adicionar veículo:', error);
     }
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    changePassword(currentPassword, newPassword);
   };
 
   return (
@@ -31,6 +38,33 @@ const UserPage = () => {
           <p><strong>Email:</strong> {user ? user.email : 'N/A'}</p>
         </div>
       </div>
+
+      <div className="user-info">
+        <h1>Senha</h1>
+        <div className="user-container-info">
+        <h2>Alterar Senha</h2>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="password"
+              placeholder="Senha atual"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Nova senha"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <button className='alterar' type="submit" disabled={loading}>Alterar Senha</button>
+          </form>
+          {error && <p className="error">{error}</p>}
+          {success && <p className="success">{success}</p>}
+        </div>
+      </div>
+
+      
+
 
       <div className="user-info">
         <h1>Carros</h1>

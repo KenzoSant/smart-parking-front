@@ -12,7 +12,7 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [vehicles, setVehicles] = useState([]); // Estado dos veículos
+  const [vehicles, setVehicles] = useState([]); 
   const navigate = useNavigate();
 
   // Função para login
@@ -23,12 +23,12 @@ const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post('http://localhost:8080/api/v1/auth/login', { email, password });
       const token = response.data.token;
-  
+
       if (token) {
         localStorage.setItem('token', token);
-        await fetchUserData(); // Buscar dados do usuário
-        await fetchVehicles();  // Buscar veículos logo após o login
-  
+        await fetchUserData(); 
+        await fetchVehicles();  
+
         setSuccess('Login efetuado com sucesso!');
         navigate('/home');
       } else {
@@ -134,12 +134,52 @@ const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data; // Retorna o histórico de estacionamento
+      return response.data; 
     } catch (error) {
       console.error('Erro ao buscar histórico de estacionamento:', error);
       throw error;
     }
   };
+
+  //Função para resetar senha
+  const resetPassword = async (email) => {
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const response = await axios.post('http://localhost:8080/api/v1/auth/reset-password', { email });
+      setSuccess('Um email de redefinição de senha foi enviado.');
+    } catch (error) {
+      setError('Erro ao enviar o email de redefinição de senha.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Função para alterar senha
+  const changePassword = async (currentPassword, newPassword) => {
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(
+        'http://localhost:8080/api/v1/auth/change-password',
+        { currentPassword, newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setSuccess('Senha alterada com sucesso.');
+    } catch (error) {
+      setError('Erro ao alterar a senha.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <AuthContext.Provider value={{
@@ -152,7 +192,9 @@ const AuthProvider = ({ children }) => {
       logout,
       fetchVehicles,
       createVehicle,
-      fetchParkingHistory, // Função restaurada para buscar histórico de estacionamento
+      fetchParkingHistory,
+      resetPassword,
+      changePassword,
       vehicles,
     }}>
       {children}
