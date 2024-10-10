@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
@@ -7,12 +8,14 @@ export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     const token = localStorage.getItem('token');
-    return token ? { token } : null;
+    return token ? jwtDecode(token) : null; 
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [vehicles, setVehicles] = useState([]); 
+  const [vehicles, setVehicles] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [makes, setMakes] = useState([]);
   const navigate = useNavigate();
 
   // Função para login
@@ -23,12 +26,14 @@ const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post('http://localhost:8080/api/v1/auth/login', { email, password });
       const token = response.data.token;
-
+      
       if (token) {
         localStorage.setItem('token', token);
-        await fetchUserData(); 
-        await fetchVehicles();  
+        const decodedToken = jwtDecode(token);
+        setUser(decodedToken);
+        console.log('Usuário decodificado:', decodedToken);
 
+        await fetchVehicles();
         setSuccess('Login efetuado com sucesso!');
         navigate('/home');
       } else {
@@ -50,8 +55,6 @@ const AuthProvider = ({ children }) => {
       const response = await axios.post('http://localhost:8080/api/v1/auth/register', { name, email, password });
       const token = response.data.token;
       localStorage.setItem('token', token);
-
-      await fetchUserData();
       setSuccess('Cadastro efetuado com sucesso!');
     } catch (err) {
       setError(err.response ? err.response.data.message : 'Erro no cadastro');
@@ -64,33 +67,7 @@ const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
     navigate('/');
-  };
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetchUserData();
-    }
-  }, []);
-
-  // Função para buscar os dados do usuário
-  const fetchUserData = async () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const response = await axios.get('http://localhost:8080/api/v1/users/me', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUser(response.data);
-        localStorage.setItem('user', JSON.stringify(response.data));
-      } catch (err) {
-        console.error('Erro ao buscar dados do usuário:', err);
-      }
-    }
   };
 
   // Função para buscar veículos
@@ -102,7 +79,7 @@ const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setVehicles(response.data); // Atualiza o estado dos veículos
+      setVehicles(response.data);
     } catch (error) {
       console.error('Erro ao buscar veículos:', error);
     }
@@ -125,6 +102,36 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  // Função para buscar cores
+  const fetchColors = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get('http://localhost:8080/api/v1/colors', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setColors(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar cores:', error);
+    }
+  };
+
+  // Função para buscar modelos
+  const fetchMakes = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get('http://localhost:8080/api/v1/makecars', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setMakes(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar masrcas:', error);
+    }
+  };
+
   // Função para buscar o histórico de estacionamento
   const fetchParkingHistory = async () => {
     const token = localStorage.getItem('token');
@@ -134,7 +141,7 @@ const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data; 
+      return response.data;
     } catch (error) {
       console.error('Erro ao buscar histórico de estacionamento:', error);
       throw error;
@@ -180,7 +187,6 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-
   return (
     <AuthContext.Provider value={{
       user,
@@ -192,10 +198,14 @@ const AuthProvider = ({ children }) => {
       logout,
       fetchVehicles,
       createVehicle,
+      fetchColors,
+      fetchMakes,
       fetchParkingHistory,
       resetPassword,
       changePassword,
       vehicles,
+      colors,
+      makes,
     }}>
       {children}
     </AuthContext.Provider>

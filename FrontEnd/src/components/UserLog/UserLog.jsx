@@ -65,6 +65,7 @@ const UserLog = () => {
           <input
             type="email"
             id="email"
+            required
             className={styles.input}
             placeholder="Digite seu email"
             value={email}
@@ -77,6 +78,7 @@ const UserLog = () => {
           <input
             type="password"
             id="password"
+            required
             className={styles.input}
             placeholder="Digite sua senha"
             value={password}

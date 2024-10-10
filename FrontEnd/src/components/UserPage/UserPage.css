@@ -16,7 +16,6 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   width: 100%;
-  max-width: 400px;
   color: var(--second-color-dark);
   margin: 2rem 0 2rem 0;
 }
@@ -41,7 +40,6 @@
 
 .vehicle-block p {
   margin: 5px 0;
-  /* Espaçamento entre os parágrafos dentro do bloco */
 }
 
 
@@ -52,7 +50,6 @@
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
   margin: 2rem 0 2rem 0;
 }
 
@@ -122,9 +119,33 @@
 }
 
 input {
-  margin-top: 15px;
   border: 2px solid var(--second-color);
   border-radius: 10px;
   padding: 10px; 
   height: 40px; 
+  margin-bottom: 10px;
+}
+
+.add-vehicle select {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.add-vehicle select:focus {
+  border-color: var(--primary-color-dark);
+}
+
+@media (min-width: 786px) {
+  .user-container-info {
+    max-width: 100%;
+  }
+  .add-vehicle {
+    max-width: 100%;
+  }
 }
