@@ -11,6 +11,7 @@
 - Ter o Docker instalado: [Instalando o Docker no WSL.pdf](https://github.com/user-attachments/files/17451705/Instalando.o.Docker.no.WSL.pdf)
 - Seguir o passo a passo do seguinte GIT: [## Smart-Parking](https://github.com/victormarinho1/smart-parking.git)
 - Seguir o passo a passo do seguinte GIT: [## Qr-Code](https://github.com/ivanvilela/Gerador-de-QrCode-Pix-.git)
+- Ter o NodeJs na sua maquina
 - Logo após baixar este projeto e rodar os seguintes comandos
   - npm install
   - npm run dev
