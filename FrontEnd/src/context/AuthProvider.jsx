@@ -114,6 +114,8 @@ const AuthProvider = ({ children }) => {
   // Função para buscar as cores
   const fetchColors = async () => {
     const token = localStorage.getItem('token');
+    console.log('token',token);
+    
     try {
       const response = await axios.get('http://localhost:8080/api/v1/colors', {
         headers: {

@@ -33,3 +33,7 @@
 .find-location-btn:hover {
     background-color: var(--second-color-hover);
 }
+
+.qr-code-container{
+    margin-top: 1rem;
+}
