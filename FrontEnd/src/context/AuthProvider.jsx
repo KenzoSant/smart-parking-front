@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
@@ -8,56 +8,50 @@ export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     const token = localStorage.getItem('token');
-    return token ? jwtDecode(token) : null; 
+    return token ? jwtDecode(token) : null;
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
   const [vehicles, setVehicles] = useState([]);
   const [colors, setColors] = useState([]);
   const [makes, setMakes] = useState([]);
+  
+  // Estados separados para mensagens
+  const [loginMessages, setLoginMessages] = useState({ success: null, error: null });
+  const [registerMessages, setRegisterMessages] = useState({ success: null, error: null });
+  const [resetPasswordMessages, setResetPasswordMessages] = useState({ success: null, error: null });
+  const [changePasswordMessages, setChangePasswordMessages] = useState({ success: null, error: null });
+  const [vehicleMessages, setVehicleMessages] = useState({ success: null, error: null });
+
   const navigate = useNavigate();
+
+  // Função para limpar mensagens de uma ação específica
+  const clearMessages = (type) => {
+    if (type === 'login') setLoginMessages({ success: null, error: null });
+    if (type === 'register') setRegisterMessages({ success: null, error: null });
+    if (type === 'resetPasswords') setResetPasswordMessages({ success: null, error: null });
+    if (type === 'changePassword') setChangePasswordMessages({ success: null, error: null });
+    if (type === 'vehiclems') setVehicleMessages({ success: null, error: null });
+  };
 
   // Função para login
   const login = async (email, password) => {
     setLoading(true);
-    setError(null);
-    setSuccess(null);
+    clearMessages('login');
     try {
       const response = await axios.post('http://localhost:8080/api/v1/auth/login', { email, password });
       const token = response.data.token;
-      
       if (token) {
         localStorage.setItem('token', token);
         const decodedToken = jwtDecode(token);
         setUser(decodedToken);
-        console.log('Usuário decodificado:', decodedToken);
-
         await fetchVehicles();
-        setSuccess('Login efetuado com sucesso!');
+        setLoginMessages({ success: 'Login efetuado com sucesso!' });
         navigate('/home');
       } else {
-        setError('Erro: Token não foi retornado.');
+        setLoginMessages({ error: 'Erro: Token não foi retornado.' });
       }
     } catch (err) {
-      setError('Email ou senha incorretos.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Função para registro
-  const register = async (name, email, password) => {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      const response = await axios.post('http://localhost:8080/api/v1/auth/register', { name, email, password });
-      const token = response.data.token;
-      localStorage.setItem('token', token);
-      setSuccess('Cadastro efetuado com sucesso!');
-    } catch (err) {
-      setError(err.response ? err.response.data.message : 'Erro no cadastro');
+      setLoginMessages({ error: 'Email ou senha incorretos.' });
     } finally {
       setLoading(false);
     }
@@ -70,39 +64,54 @@ const AuthProvider = ({ children }) => {
     navigate('/');
   };
 
-  // Função para buscar veículos
-  const fetchVehicles = async () => {
-    const token = localStorage.getItem('token');
+  // Função para registro
+  const register = async (name, email, password) => {
+    setLoading(true);
+    clearMessages('register');
     try {
-      const response = await axios.get('http://localhost:8080/api/v1/vehicles', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setVehicles(response.data);
-    } catch (error) {
-      console.error('Erro ao buscar veículos:', error);
+      const response = await axios.post('http://localhost:8080/api/v1/auth/register', { name, email, password });
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      setRegisterMessages({ success: 'Cadastro efetuado com sucesso!' });
+    } catch (err) {
+      setRegisterMessages({ error: 'Erro ao cadastrar.' });
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Função para adicionar veículo
-  const createVehicle = async (vehicleData) => {
-    const token = localStorage.getItem('token');
+  // Função para redefinir senha
+  const resetPassword = async (email) => {
+    setLoading(true);
+    clearMessages('resetPasswords');
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/vehicles', vehicleData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      await fetchVehicles(); // Atualiza a lista de veículos após adicionar
-      return response.data;
+      const response = await axios.post('http://localhost:8080/api/v1/auth/reset-password', { email });
+      setResetPasswordMessages({ success: 'A senha foi redefinida!' });
     } catch (error) {
-      console.error('Erro ao criar veículo:', error);
-      throw error;
+      setResetPasswordMessages({ error: 'Erro ao redefinir senha.' });
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Função para buscar cores
+  // Função para alterar senha
+  const changePassword = async (currentPassword, newPassword) => {
+    setLoading(true);
+    clearMessages('changePassword');
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put('http://localhost:8080/api/v1/auth/change-password', { currentPassword, newPassword }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setChangePasswordMessages({ success: 'Senha alterada com sucesso!' });
+    } catch (error) {
+      setChangePasswordMessages({ error: 'Erro ao alterar senha.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Função para buscar as cores
   const fetchColors = async () => {
     const token = localStorage.getItem('token');
     try {
@@ -110,7 +119,7 @@ const AuthProvider = ({ children }) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });
+      })
       setColors(response.data);
     } catch (error) {
       console.error('Erro ao buscar cores:', error);
@@ -132,6 +141,36 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  // Função para buscar veículos
+  const fetchVehicles = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get('http://localhost:8080/api/v1/vehicles', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setVehicles(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar veículos:', error);
+    }
+  };
+
+  // Função para adicionar veículo
+  const createVehicle = async (vehicleData) => {
+    clearMessages('vehiclems');
+    const token = localStorage.getItem('token');
+    try {
+      await axios.post('http://localhost:8080/api/v1/vehicles', vehicleData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      await fetchVehicles(); 
+      setVehicleMessages({ success: 'Veículo cadastrado com sucesso!' });
+    } catch (error) {
+      setVehicleMessages({ error: 'Erro ao cadastrar veículo.' });
+    }
+  };
+
   // Função para buscar o histórico de estacionamento
   const fetchParkingHistory = async () => {
     const token = localStorage.getItem('token');
@@ -148,64 +187,29 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  //Função para resetar senha
-  const resetPassword = async (email) => {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      const response = await axios.post('http://localhost:8080/api/v1/auth/reset-password', { email });
-      setSuccess('Um email de redefinição de senha foi enviado.');
-    } catch (error) {
-      setError('Erro ao enviar o email de redefinição de senha.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Função para alterar senha
-  const changePassword = async (currentPassword, newPassword) => {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.put(
-        'http://localhost:8080/api/v1/auth/change-password',
-        { currentPassword, newPassword },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setSuccess('Senha alterada com sucesso.');
-    } catch (error) {
-      setError('Erro ao alterar a senha.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <AuthContext.Provider value={{
       user,
       loading,
-      success,
-      error,
       login,
       register,
-      logout,
-      fetchVehicles,
+      resetPassword,
+      changePassword,
       createVehicle,
+      clearMessages,
+      loginMessages,
+      registerMessages,
+      resetPasswordMessages,
+      changePasswordMessages,
+      vehicleMessages,
+      fetchVehicles,
       fetchColors,
       fetchMakes,
       fetchParkingHistory,
-      resetPassword,
-      changePassword,
+      logout,
       vehicles,
       colors,
-      makes,
+      makes
     }}>
       {children}
     </AuthContext.Provider>

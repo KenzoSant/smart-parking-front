@@ -1,17 +1,16 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthProvider'; 
 import styles from './UserLog.module.css';
 import { useNavigate } from 'react-router-dom';  
 
 const UserLog = () => {
-  const { login, register, error, loading, success } = useContext(AuthContext);
+  const { login, register, loading, clearMessages, loginMessages, registerMessages } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [isLogin, setIsLogin] = useState(true); 
   const navigate = useNavigate();
 
-  // Função para alternar entre Login e Cadastro
   const toggleForm = () => {
     setIsLogin(!isLogin);
     setEmail('');
@@ -19,33 +18,24 @@ const UserLog = () => {
     setName('');
   };
 
-  // Função para manipular o submit
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isLogin) {
-      handleLogin();
+      login(email, password);
     } else {
-      handleRegister();
+      register(name, email, password);
     }
   };
 
-  // Função para login
-  const handleLogin = () => {
-    login(email, password);
-  };
-
-  // Função para cadastro
-  const handleRegister = () => {
-    register(name, email, password);
-  };
-  
+  useEffect(() => {
+    clearMessages(isLogin ? 'login' : 'register');
+  }, [isLogin]);
 
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>{isLogin ? 'Login' : 'Cadastro'}</h1>
 
       <form className={styles.form} onSubmit={handleSubmit}>
-        {/* Se não for login, exibe o campo de nome */}
         {!isLogin && (
           <div className={styles.formGroup}>
             <label htmlFor="name">Nome</label>
@@ -91,8 +81,11 @@ const UserLog = () => {
         </button>
       </form>
 
-      {error && <p className={styles.error}>{error}</p>}
-      {success && <p className={styles.success}>{success}</p>}
+      {isLogin && loginMessages.success && <div className="success">{loginMessages.success}</div>}
+      {isLogin && loginMessages.error && <div className="error">{loginMessages.error}</div>}
+
+      {!isLogin && registerMessages.success && <div className="success">{registerMessages.success}</div>}
+      {!isLogin && registerMessages.error && <div className="error">{registerMessages.error}</div>}
 
       <button className={styles.toggleButton} onClick={toggleForm}>
         {isLogin ? 'Não tem uma conta? Cadastre-se' : 'Já tem uma conta? Faça Login'}
@@ -101,7 +94,6 @@ const UserLog = () => {
       <button className={styles.toggleButton} onClick={() => navigate('/forgot-password')}>
         Esqueceu a senha?
       </button>
-
     </div>
   );
 };

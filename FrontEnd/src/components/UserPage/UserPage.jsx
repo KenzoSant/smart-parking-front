@@ -1,20 +1,20 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthProvider';
-import axios from 'axios';
 import './UserPage.css';
 
 const UserPage = () => {
-  const { user, logout, createVehicle, vehicles, fetchVehicles, changePassword, loading, error, success } = useContext(AuthContext);
+  const { user, logout, createVehicle, vehicles, fetchVehicles, changePassword, loading, clearMessages, vehicleMessages, resetPasswordMessages } = useContext(AuthContext);
   const [vehicle, setVehicle] = useState({ make: '', model: '', plate: '', year: '', color: '' });
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const { fetchColors, fetchMakes, colors, makes } = useContext(AuthContext);
 
-  //Busca ao montar, problema do f5
   useEffect(() => {
     fetchVehicles();
-    fetchColors(); 
-    fetchMakes(); 
+    fetchColors();
+    fetchMakes();
+    clearMessages('resetPasswords');
+    clearMessages('vehiclems');
   }, []);
 
   const handleAddVehicle = async () => {
@@ -29,6 +29,19 @@ const UserPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     changePassword(currentPassword, newPassword);
+  };
+
+  // Validação de placa
+  const validatePlate = (plate) => {
+    const oldPlateFormat = /^[A-Z]{3}\d{4}$/; // AAA1234
+    const newPlateFormat = /^[A-Z]{3}\d{1}[A-Z]{1}\d{2}$/; // AAA1A23
+    return oldPlateFormat.test(plate) || newPlateFormat.test(plate);
+  };
+
+  // Validação do ano
+  const validateYear = (year) => {
+    const currentYear = new Date().getFullYear();
+    return year >= 1900 && year <= currentYear;
   };
 
   return (
@@ -64,9 +77,10 @@ const UserPage = () => {
               onChange={(e) => setNewPassword(e.target.value)}
             />
             <button className='alterar' type="submit" disabled={loading}>Alterar Senha</button>
+
+            {resetPasswordMessages.success && <div className="success">{resetPasswordMessages.success}</div>}
+            {resetPasswordMessages.error && <div className="error">{resetPasswordMessages.error}</div>}
           </form>
-          {error && <p className="error">{error}</p>}
-          {success && <p className="success">{success}</p>}
         </div>
       </div>
 
@@ -113,16 +127,39 @@ const UserPage = () => {
         />
         <input
           type="text"
+          required
+          maxLength={7}
           value={vehicle.plate}
-          onChange={(e) => setVehicle({ ...vehicle, plate: e.target.value.toUpperCase() })}
+          onChange={(e) => {
+            const value = e.target.value.toUpperCase();
+            setVehicle({ ...vehicle, plate: value });
+          }}
+          // onBlur={(e) => {
+          //   const value = e.target.value.toUpperCase();
+          //   if (!validatePlate(value)) {
+          //     alert('Placa inválida');
+          //   }
+          // }}
           placeholder="Placa"
         />
 
         <input
-          type="text"
+          type="number"
           value={vehicle.year}
           required
-          onChange={(e) => setVehicle({ ...vehicle, year: e.target.value })}
+          maxLength={4} // Este maxLength não funciona para "number", mas mantém para contexto
+          onChange={(e) => {
+            const value = e.target.value;
+            if (value.length <= 4) {
+              setVehicle({ ...vehicle, year: value });
+            }
+          }}
+          // onBlur={(e) => {
+          //   const value = e.target.value;
+          //   if (!validateYear(value)) {
+          //     alert('Ano inválido');
+          //   }
+          // }}
           placeholder="Ano"
         />
         <select
@@ -135,8 +172,10 @@ const UserPage = () => {
             <option key={index} value={color.name}>{color.name}</option>
           ))}
         </select>
-        {success && <p className="success">{success}</p>}
         <button onClick={handleAddVehicle}>Adicionar</button>
+
+        {vehicleMessages.success && <div className="success">{vehicleMessages.success}</div>}
+        {vehicleMessages.error && <div className="error">{vehicleMessages.error}</div>}
       </div>
 
       <button onClick={logout} className="logout-button">

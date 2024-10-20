@@ -1,12 +1,16 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthProvider';
 import { useNavigate } from 'react-router-dom';  
 import styles from '../UserLog/UserLog.module.css'; 
 
 const ForgotPassword = () => {
-  const { resetPassword, loading, error, success } = useContext(AuthContext);
+  const { resetPassword, loading, clearMessages, changePasswordMessages } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const navigate = useNavigate();  
+
+  useEffect(() => {
+    clearMessages('changePassword');
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,10 +37,10 @@ const ForgotPassword = () => {
           {loading ? 'Enviando...' : 'Enviar'}
         </button>
       </form>
-      {error && <p className={styles.error}>{error}</p>}
-      {success && <p className={styles.success}>{success}</p>}
 
-      {/* Botão para voltar ao login */}
+      {changePasswordMessages.success && <div className="success">{changePasswordMessages.success}</div>}
+      {changePasswordMessages.error && <div className="error">{changePasswordMessages.error}</div>}
+
       <button className={styles.toggleButton} onClick={handleBackToLogin}>
         Voltar ao Login
       </button>
