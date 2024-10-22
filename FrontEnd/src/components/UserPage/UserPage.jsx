@@ -3,7 +3,7 @@ import { AuthContext } from '../../context/AuthProvider';
 import './UserPage.css';
 
 const UserPage = () => {
-  const { user, logout, createVehicle, vehicles, fetchVehicles, changePassword, loading, clearMessages, vehicleMessages, resetPasswordMessages } = useContext(AuthContext);
+  const { user, logout, createVehicle, vehicles, fetchVehicles, resetPassword, loading, clearMessages, vehicleMessages, resetPasswordMessages } = useContext(AuthContext);
   const [vehicle, setVehicle] = useState({ make: '', model: '', plate: '', year: '', color: '' });
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -28,8 +28,9 @@ const UserPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    changePassword(currentPassword, newPassword);
+    resetPassword(currentPassword, newPassword); 
   };
+  
 
   // Validação de placa
   const validatePlate = (plate) => {

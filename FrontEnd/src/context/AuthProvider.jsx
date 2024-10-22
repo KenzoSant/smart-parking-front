@@ -80,20 +80,6 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  // Função para redefinir senha
-  const resetPassword = async (email) => {
-    setLoading(true);
-    clearMessages('resetPasswords');
-    try {
-      const response = await axios.post('http://localhost:8080/api/v1/auth/reset-password', { email });
-      setResetPasswordMessages({ success: 'A senha foi redefinida!' });
-    } catch (error) {
-      setResetPasswordMessages({ error: 'Erro ao redefinir senha.' });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Função para alterar senha
   const changePassword = async (currentPassword, newPassword) => {
     setLoading(true);
@@ -111,11 +97,30 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  // Função para resetar senha
+  const resetPassword = async (currentPassword, newPassword) => {
+    setLoading(true);
+    clearMessages('resetPasswords');
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put('http://localhost:8080/api/v1/users/reset-password', {
+        currentPassword,
+        newPassword
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setResetPasswordMessages({ success: 'Senha alterada com sucesso!' });
+    } catch (error) {
+      setResetPasswordMessages({ error: 'Erro ao alterar senha.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Função para buscar as cores
   const fetchColors = async () => {
     const token = localStorage.getItem('token');
-    console.log('token',token);
-    
+    console.log('tokencor',token);  
     try {
       const response = await axios.get('http://localhost:8080/api/v1/colors', {
         headers: {
@@ -139,7 +144,7 @@ const AuthProvider = ({ children }) => {
       });
       setMakes(response.data);
     } catch (error) {
-      console.error('Erro ao buscar masrcas:', error);
+      console.error('Erro ao buscar marcas:', error);
     }
   };
 

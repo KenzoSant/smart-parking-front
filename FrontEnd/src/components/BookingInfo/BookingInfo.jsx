@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthProvider';
+import { FaRegCopy } from 'react-icons/fa'; // Ícone de cópia
 import './BookingInfo.css';
 
 const BookingInfo = () => {
@@ -8,7 +9,9 @@ const BookingInfo = () => {
   const [parkingInfo, setParkingInfo] = useState(null);
   const [error, setError] = useState(null);
   const [qrCodeUrl, setQrCodeUrl] = useState(null);
+  const [qrCodePayload, setQrCodePayload] = useState(null);
   const [isLoadingQrCode, setIsLoadingQrCode] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(''); // Mensagem de cópia
 
   useEffect(() => {
     if (user) {
@@ -41,7 +44,9 @@ const BookingInfo = () => {
   }
 
   if (!parkingInfo) {
-    return <div>Carregando...</div>;
+    return <div className="booking-info">
+        <div>Sem estacionamentos...</div>
+    </div>;
   }
 
   const { parking, entry_time, plate } = parkingInfo;
@@ -60,13 +65,24 @@ const BookingInfo = () => {
         id_usuario: user.id,
       });
 
-      const { url_qrcode } = response.data; 
+      const { url_qrcode, payload } = response.data; // Recebe a URL e o payload do QR Code
       setQrCodeUrl(url_qrcode);
+      setQrCodePayload(payload); // Armazena o payload
     } catch (err) {
       console.error('Erro ao gerar QR Code:', err);
     } finally {
       setIsLoadingQrCode(false);
     }
+  };
+
+  // Função para copiar o payload do QR Code
+  const handleCopyPayload = () => {
+    navigator.clipboard.writeText(qrCodePayload).then(() => {
+      setCopySuccess('Copiado!'); // Exibe a mensagem de sucesso ao copiar
+      setTimeout(() => setCopySuccess(''), 2000); // Limpa a mensagem após 2 segundos
+    }).catch(err => {
+      console.error('Erro ao copiar:', err);
+    });
   };
 
   return (
@@ -90,6 +106,13 @@ const BookingInfo = () => {
       {qrCodeUrl && (
         <div className="qr-code-container">
           <img src={qrCodeUrl} alt="QR Code para pagamento" />
+          <div className="booking-time cod">
+            <span><strong>Código:</strong> {qrCodePayload?.slice(0, 10)}... {/* Exibe apenas os primeiros 10 caracteres */}</span>
+            <button className="copy-payload-btn" onClick={handleCopyPayload}>
+              <FaRegCopy /> {/* Ícone de cópia */}
+            </button>
+            {copySuccess && <span className="copy-success">{copySuccess}</span>} {/* Mensagem de sucesso */}
+          </div>
         </div>
       )}
     </div>
