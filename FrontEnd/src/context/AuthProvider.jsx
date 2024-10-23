@@ -14,6 +14,7 @@ const AuthProvider = ({ children }) => {
   const [vehicles, setVehicles] = useState([]);
   const [colors, setColors] = useState([]);
   const [makes, setMakes] = useState([]);
+  const [paymentHistory, setPaymentHistory] = useState([]); 
   
   // Estados separados para mensagens
   const [loginMessages, setLoginMessages] = useState({ success: null, error: null });
@@ -194,6 +195,24 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  // Função para realizar pagamento
+  const makePayment = async (plate) => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.post('http://localhost:8080/api/v1/payments', { plate }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      // Adiciona a resposta ao histórico de pagamentos
+      const paymentData = response.data;
+      setPaymentHistory((prevHistory) => [...prevHistory, paymentData]);
+    } catch (error) {
+      console.error('Erro ao processar pagamento:', error);
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -216,7 +235,9 @@ const AuthProvider = ({ children }) => {
       logout,
       vehicles,
       colors,
-      makes
+      makes,
+      makePayment,
+      paymentHistory 
     }}>
       {children}
     </AuthContext.Provider>

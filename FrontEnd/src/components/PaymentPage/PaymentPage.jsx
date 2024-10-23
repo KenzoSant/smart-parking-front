@@ -1,68 +1,56 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { AuthContext } from '../../context/AuthProvider';
 import styles from './PaymentPage.module.css';
-import { assets } from '../../assets/js/assets';
 
 const PaymentPage = () => {
-    return (
-        <div>
-            <h1 className={styles.title}>Pagamentos</h1>
-            <div className={styles.container}>
-                <div className={styles.container_pay}>
-                    <img src={assets.img1} alt="Estacionamento 1" />
-                    <div className={styles.fieldcontainer}>
-                        {/* <div className={styles.field}>
-                            <label>Nome:</label>
-                            <p>Mateus Santos</p>
-                        </div> */}
-                        <div className={styles.field}>
-                            <label>Estacionamento:</label>
-                            <p>Estacionamento Central</p>
-                        </div>
-                        {/* <div className={styles.field}>
-                            <label>Carro:</label>
-                            <p>Gol</p>
-                        </div>
-                        <div className={styles.field}>
-                            <label>Placa:</label>
-                            <p>NOP0Q12</p>
-                        </div> */}
-                        <div className={styles.field}>
-                            <label>Valor:</label>
-                            <p>R$ 25,00</p>
-                        </div>
-                        <button className={styles.submitButton}>Pagar</button>
-                    </div>
-                </div>
+  const { paymentHistory } = useContext(AuthContext); // Acessando o histórico de pagamentos do contexto
 
-                <div className={styles.container_pay}>
-                    <img src={assets.img2} alt="Estacionamento 2" />
-                    <div className={styles.fieldcontainer}>
-                        {/* <div className={styles.field}>
-                            <label>Nome:</label>
-                            <p>Mateus Santos</p>
-                        </div> */}
-                        <div className={styles.field}>
-                        <label>Estacionamento:</label>
-                            <p>Estacionamento Sul</p>
-                        </div>
-                        {/* <div className={styles.field}>
-                            <label>Carro:</label>
-                            <p>Fiat Uno</p>
-                        </div>
-                        <div className={styles.field}>
-                            <label>Placa:</label>
-                            <p>XYZ1A23</p>
-                        </div> */}
-                        <div className={styles.field}>
-                            <label>Valor:</label>
-                            <p>R$ 30,00</p>
-                        </div>
-                        {/* <button className={styles.submitButton}>Pagar</button> */}
-                    </div>
+  return (
+    <div>
+      <h1 className={styles.title}>Histórico de Pagamentos</h1>
+      <div className={styles.container}>
+        {paymentHistory.length === 0 ? (
+          <p>Nenhum pagamento realizado ainda.</p>
+        ) : (
+          paymentHistory.map((payment, index) => (
+            <div key={index} className={styles.container_pay}>
+              <div className={styles.fieldcontainer}>
+                <div className={styles.field}>
+                  <label>Cliente:</label>
+                  <p>{payment.client}</p>
                 </div>
+                <div className={styles.field}>
+                  <label>Estacionamento:</label>
+                  <p>{payment.parking}</p>
+                </div>
+                <div className={styles.field}>
+                  <label>Modelo:</label>
+                  <p>{payment.model}</p>
+                </div>
+                <div className={styles.field}>
+                  <label>Cor:</label>
+                  <p>{payment.color}</p>
+                </div>
+               
+                <div className={styles.field}>
+                  <label>Placa:</label>
+                  <p>{payment.plate}</p>
+                </div>
+                <div className={styles.field}>
+                  <label>Valor:</label>
+                  <p>{payment.amount}</p>
+                </div>
+                <div className={styles.field}>
+                  <label>Data:</label>
+                  <p>{new Date(payment.date).toLocaleDateString()}</p>
+                </div>
+              </div>
             </div>
-        </div>
-    );
+          ))
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default PaymentPage;

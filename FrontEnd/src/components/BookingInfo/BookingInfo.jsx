@@ -5,13 +5,14 @@ import { FaRegCopy } from 'react-icons/fa'; // Ícone de cópia
 import './BookingInfo.css';
 
 const BookingInfo = () => {
-  const { user } = useContext(AuthContext);
+  const { user, makePayment } = useContext(AuthContext); // Obtém a função de pagamento do contexto
   const [parkingInfo, setParkingInfo] = useState(null);
   const [error, setError] = useState(null);
   const [qrCodeUrl, setQrCodeUrl] = useState(null);
   const [qrCodePayload, setQrCodePayload] = useState(null);
   const [isLoadingQrCode, setIsLoadingQrCode] = useState(false);
   const [copySuccess, setCopySuccess] = useState(''); // Mensagem de cópia
+  const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false); // Estado para verificar se o pagamento foi confirmado
 
   useEffect(() => {
     if (user) {
@@ -44,9 +45,11 @@ const BookingInfo = () => {
   }
 
   if (!parkingInfo) {
-    return <div className="booking-info">
+    return (
+      <div className="booking-info">
         <div>Sem estacionamentos...</div>
-    </div>;
+      </div>
+    );
   }
 
   const { parking, entry_time, plate } = parkingInfo;
@@ -75,6 +78,22 @@ const BookingInfo = () => {
     }
   };
 
+  // Função para confirmar o pagamento
+  const handleConfirmPayment = async () => {
+    try {
+      const paymentData = { plate };
+      console.log('Dados enviados para o pagamento:', paymentData);
+
+      await makePayment(plate); // Chama a função para efetuar o pagamento usando a placa do veículo
+      setIsPaymentConfirmed(true); // Marca o pagamento como confirmado
+      setQrCodeUrl(null); // Remove o QR Code após o pagamento
+      //alert('Pagamento confirmado com sucesso!'); // Alerta o usuário
+    } catch (err) {
+      console.error('Erro ao confirmar pagamento:', err);
+      alert('Erro ao confirmar pagamento.');
+    }
+  };
+
   // Função para copiar o payload do QR Code
   const handleCopyPayload = () => {
     navigator.clipboard.writeText(qrCodePayload).then(() => {
@@ -99,7 +118,7 @@ const BookingInfo = () => {
         </div>
       </div>
 
-      <button className="find-location-btn" onClick={handleGenerateQrCode} disabled={isLoadingQrCode}>
+      <button className="find-location-btn" onClick={handleGenerateQrCode} disabled={isLoadingQrCode || isPaymentConfirmed}>
         {isLoadingQrCode ? 'Gerando QR Code...' : 'Pagamento'}
       </button>
 
@@ -113,6 +132,11 @@ const BookingInfo = () => {
             </button>
             {copySuccess && <span className="copy-success">{copySuccess}</span>} {/* Mensagem de sucesso */}
           </div>
+
+          {/* Botão de Confirmar Pagamento */}
+          <button className="find-location-btn" onClick={handleConfirmPayment} disabled={isPaymentConfirmed}>
+            {isPaymentConfirmed ? 'Pagamento Confirmado' : 'Confirmar Pagamento'}
+          </button>
         </div>
       )}
     </div>
