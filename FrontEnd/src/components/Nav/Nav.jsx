@@ -13,9 +13,9 @@ const Nav = () => {
         <li className={location.pathname === '/' ? 'active' : ''}>
           <Link to="/home"><img src={assets.home} alt="Home" /></Link>
         </li>
-        <li className={location.pathname === '/pagar' ? 'active' : ''}>
+        {/* <li className={location.pathname === '/pagar' ? 'active' : ''}>
           <Link to="/pagar"><img src={assets.pagar} alt="Pagar" /></Link>
-        </li>
+        </li> */}
         <li className={location.pathname === '/historico' ? 'active' : ''}>
           <Link to="/historico"><img src={assets.historia} alt="Histórico" /></Link>
         </li>

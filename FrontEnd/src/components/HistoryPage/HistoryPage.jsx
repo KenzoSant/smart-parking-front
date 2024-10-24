@@ -3,7 +3,7 @@ import '../LocationDisplay/LocationDisplay.css';
 import { AuthContext } from '../../context/AuthProvider';
 import { assets } from '../../assets/js/assets';
 
-const HistoryPage = () => {
+const HistoryPage = ({ isHomePage = false }) => { // Adiciona a prop `isHomePage`
   const { fetchParkingHistory } = useContext(AuthContext); 
   const [locations, setLocations] = useState([]);
   const token = localStorage.getItem('token'); 
@@ -25,14 +25,14 @@ const HistoryPage = () => {
 
   return (
     <div className="location-display">
-      <h1>Estacionamentos utilizados</h1>
+      <h1>{isHomePage ? 'Últimos Estacionamentos' : 'Estacionamentos utilizados'}</h1> {/* Título dinâmico */}
 
       {locations.length > 0 ? (
         locations.map((location, index) => (
           <div key={index} className="location">
             <img src={assets[`img${index % 4 + 1}`]} alt={location.name} />
             <div className="location-info">
-              <h3>{location.name}</h3><br />
+              <h3>{location.name}</h3>
               <p>Valor Pago - <strong>R${location.amount}</strong></p>
               <p>Carro - <strong>{location.model}</strong></p>
             </div>

@@ -6,6 +6,15 @@
     border-radius: 10px;
     margin: 20px;
     justify-content: center;
+    align-items: center;
+}
+
+.booking-local{
+    width: 100%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
 }
 
 .booking-content{

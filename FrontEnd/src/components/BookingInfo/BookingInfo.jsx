@@ -6,7 +6,7 @@ import './BookingInfo.css';
 
 const BookingInfo = () => {
   const { user, makePayment } = useContext(AuthContext); // Obtém a função de pagamento do contexto
-  const [parkingInfo, setParkingInfo] = useState(null);
+  const [parkingInfo, setParkingInfo] = useState([]); // Alterado para array
   const [error, setError] = useState(null);
   const [qrCodeUrl, setQrCodeUrl] = useState(null);
   const [qrCodePayload, setQrCodePayload] = useState(null);
@@ -22,9 +22,9 @@ const BookingInfo = () => {
         const data = JSON.parse(event.data);
         console.log('Dados recebidos do SSE:', data);
         if (Array.isArray(data) && data.length > 0) {
-          setParkingInfo(data[0]);
+          setParkingInfo(data); // Define a lista de carros no estado
         } else {
-          setParkingInfo(null);
+          setParkingInfo([]);
         }
       };
 
@@ -44,7 +44,7 @@ const BookingInfo = () => {
     return <div>{error}</div>;
   }
 
-  if (!parkingInfo) {
+  if (parkingInfo.length === 0) {
     return (
       <div className="booking-info">
         <div>Sem estacionamentos...</div>
@@ -52,15 +52,8 @@ const BookingInfo = () => {
     );
   }
 
-  const { parking, entry_time, plate } = parkingInfo;
-
-  // Formatar a hora de entrada
-  const formattedEntryTime = entry_time
-    ? new Date(entry_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    : 'Horário inválido';
-
   // Função para gerar o QR Code ao clicar no botão de pagamento
-  const handleGenerateQrCode = async () => {
+  const handleGenerateQrCode = async (plate) => {
     setIsLoadingQrCode(true);
     try {
       const response = await axios.post('http://localhost:5000/gerar_qrcode', {
@@ -79,7 +72,7 @@ const BookingInfo = () => {
   };
 
   // Função para confirmar o pagamento
-  const handleConfirmPayment = async () => {
+  const handleConfirmPayment = async (plate) => {
     try {
       const paymentData = { plate };
       console.log('Dados enviados para o pagamento:', paymentData);
@@ -105,40 +98,62 @@ const BookingInfo = () => {
   };
 
   return (
-    <div className="booking-info">
-      <div className="booking-content">
-        <div className="booking-time">
-          <span>{parking || 'Local não disponível'}</span>
-          <p>Entrada: <strong>{formattedEntryTime}</strong></p>
-        </div>
+    <div>
+      {parkingInfo.map((carInfo, index) => {
+        const { parking, entry_time, plate, current_amount } = carInfo;
 
-        <div className="booking-time">
-          <span>Placa</span>
-          <p><strong>{plate || 'Placa não disponível'}</strong></p>
-        </div>
-      </div>
+        // Formatar a hora de entrada
+        const formattedEntryTime = entry_time
+          ? new Date(entry_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : 'Horário inválido';
 
-      <button className="find-location-btn" onClick={handleGenerateQrCode} disabled={isLoadingQrCode || isPaymentConfirmed}>
-        {isLoadingQrCode ? 'Gerando QR Code...' : 'Pagamento'}
-      </button>
+        return (
+          <div key={index} className="booking-info">
+            <div className="booking-local">
+              <p><strong>{parking || 'Local não disponível'}</strong></p>
+            </div>
+            
+            <div className="booking-content">
+              <div className="booking-time">
+                <span>Entrada:</span>
+                <p><strong>{formattedEntryTime}</strong></p>
+              </div>
 
-      {qrCodeUrl && (
-        <div className="qr-code-container">
-          <img src={qrCodeUrl} alt="QR Code para pagamento" />
-          <div className="booking-time cod">
-            <span><strong>Código:</strong> {qrCodePayload?.slice(0, 10)}... {/* Exibe apenas os primeiros 10 caracteres */}</span>
-            <button className="copy-payload-btn" onClick={handleCopyPayload}>
-              <FaRegCopy /> {/* Ícone de cópia */}
+              <div className="booking-time">
+                <span>Placa:</span>
+                <p><strong>{plate || 'Placa não disponível'}</strong></p>
+              </div>
+
+              <div className="booking-time">
+                <span>Valor:</span>
+                <p><strong>R${current_amount || 'Valo não disponível'}</strong></p>
+              </div>
+            </div>
+
+            <button className="find-location-btn" onClick={() => handleGenerateQrCode(plate)} disabled={isLoadingQrCode || isPaymentConfirmed}>
+              {isLoadingQrCode ? 'Gerando QR Code...' : 'Pagamento'}
             </button>
-            {copySuccess && <span className="copy-success">{copySuccess}</span>} {/* Mensagem de sucesso */}
-          </div>
 
-          {/* Botão de Confirmar Pagamento */}
-          <button className="find-location-btn" onClick={handleConfirmPayment} disabled={isPaymentConfirmed}>
-            {isPaymentConfirmed ? 'Pagamento Confirmado' : 'Confirmar Pagamento'}
-          </button>
-        </div>
-      )}
+            {qrCodeUrl && (
+              <div className="qr-code-container">
+                <img src={qrCodeUrl} alt="QR Code para pagamento" />
+                <div className="booking-time cod">
+                  <span><strong>Código:</strong> {qrCodePayload?.slice(0, 10)}... {/* Exibe apenas os primeiros 10 caracteres */}</span>
+                  <button className="copy-payload-btn" onClick={handleCopyPayload}>
+                    <FaRegCopy /> {/* Ícone de cópia */}
+                  </button>
+                  {copySuccess && <span className="copy-success">{copySuccess}</span>} {/* Mensagem de sucesso */}
+                </div>
+
+                {/* Botão de Confirmar Pagamento */}
+                <button className="find-location-btn" onClick={() => handleConfirmPayment(plate)} disabled={isPaymentConfirmed}>
+                  {isPaymentConfirmed ? 'Pagamento Confirmado' : 'Confirmar Pagamento'}
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };
