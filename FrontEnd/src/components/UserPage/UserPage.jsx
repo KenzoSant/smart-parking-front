@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthProvider';
 import './UserPage.css';
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
 
 const UserPage = () => {
   const { user, logout, createVehicle, vehicles, fetchVehicles, resetPassword, loading, clearMessages, vehicleMessages, resetPasswordMessages } = useContext(AuthContext);
@@ -8,6 +9,9 @@ const UserPage = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const { fetchColors, fetchMakes, colors, makes } = useContext(AuthContext);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     fetchVehicles();
@@ -18,6 +22,18 @@ const UserPage = () => {
   }, []);
 
   const handleAddVehicle = async () => {
+    if (!validatePlate(vehicle.plate)) {
+      setErrorMessage('Placa inválida');
+      return;
+    }
+
+    if (!validateYear(vehicle.year)) {
+      setErrorMessage('Ano inválido');
+      return;
+    }
+
+    setErrorMessage('');
+
     try {
       await createVehicle(vehicle);
       setVehicle({ make: '', model: '', plate: '', year: '', color: '' });
@@ -28,18 +44,15 @@ const UserPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    resetPassword(currentPassword, newPassword); 
+    resetPassword(currentPassword, newPassword);
   };
-  
 
-  // Validação de placa
   const validatePlate = (plate) => {
     const oldPlateFormat = /^[A-Z]{3}\d{4}$/; // AAA1234
     const newPlateFormat = /^[A-Z]{3}\d{1}[A-Z]{1}\d{2}$/; // AAA1A23
     return oldPlateFormat.test(plate) || newPlateFormat.test(plate);
   };
 
-  // Validação do ano
   const validateYear = (year) => {
     const currentYear = new Date().getFullYear();
     return year >= 1900 && year <= currentYear;
@@ -63,21 +76,47 @@ const UserPage = () => {
         <div className="user-container-info">
           <h2>Alterar Senha</h2>
           <form onSubmit={handleSubmit}>
-            <input
-              type="password"
-              placeholder="Senha atual"
-              value={currentPassword}
-              required
-              onChange={(e) => setCurrentPassword(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Nova senha"
-              value={newPassword}
-              required
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-            <button className='alterar' type="submit" disabled={loading}>Alterar Senha</button>
+            <div className="password-container">
+              <input
+                type={showCurrentPassword ? 'text' : 'password'}
+                placeholder="Senha atual"
+                value={currentPassword}
+                required
+                maxLength={100}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+              <button 
+                type="button" 
+                className="showPasswordButton"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+              >
+                {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            <div className="password-container">
+              <input
+                type={showNewPassword ? 'text' : 'password'}
+                placeholder="Nova senha"
+                value={newPassword}
+                required
+                maxLength={100}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <button 
+                type="button" 
+                className="showPasswordButton"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+              >
+                {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            <button 
+              className='alterar' 
+              type="submit" 
+              disabled={loading}
+            >
+              Alterar Senha
+            </button>
 
             {resetPasswordMessages.success && <div className="success">{resetPasswordMessages.success}</div>}
             {resetPasswordMessages.error && <div className="error">{resetPasswordMessages.error}</div>}
@@ -123,6 +162,7 @@ const UserPage = () => {
           type="text"
           value={vehicle.model}
           required
+          maxLength={50}
           onChange={(e) => setVehicle({ ...vehicle, model: e.target.value })}
           placeholder="Modelo"
         />
@@ -135,32 +175,18 @@ const UserPage = () => {
             const value = e.target.value.toUpperCase();
             setVehicle({ ...vehicle, plate: value });
           }}
-          // onBlur={(e) => {
-          //   const value = e.target.value.toUpperCase();
-          //   if (!validatePlate(value)) {
-          //     alert('Placa inválida');
-          //   }
-          // }}
           placeholder="Placa"
         />
-
         <input
-          type="number"
+          type="number" 
           value={vehicle.year}
           required
-          maxLength={4} // Este maxLength não funciona para "number", mas mantém para contexto
           onChange={(e) => {
             const value = e.target.value;
             if (value.length <= 4) {
               setVehicle({ ...vehicle, year: value });
             }
           }}
-          // onBlur={(e) => {
-          //   const value = e.target.value;
-          //   if (!validateYear(value)) {
-          //     alert('Ano inválido');
-          //   }
-          // }}
           placeholder="Ano"
         />
         <select
@@ -175,6 +201,7 @@ const UserPage = () => {
         </select>
         <button onClick={handleAddVehicle}>Adicionar</button>
 
+        {errorMessage && <div className="error">{errorMessage}</div>}
         {vehicleMessages.success && <div className="success">{vehicleMessages.success}</div>}
         {vehicleMessages.error && <div className="error">{vehicleMessages.error}</div>}
       </div>

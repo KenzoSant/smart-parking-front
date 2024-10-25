@@ -1,6 +1,6 @@
 .container {
     max-width: 400px;
-    width: calc(100% - 2.8rem); 
+    width: calc(100% - 2.8rem);
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -10,11 +10,11 @@
     justify-content: center;
     align-items: center;
     min-height: 80vh;
-    margin: 0 auto; 
+    margin: 0 auto;
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); 
+    transform: translate(-50%, -50%);
 }
 
 .title {
@@ -74,12 +74,37 @@
     color: var(--second-color-hover);
 }
 
-.error{
+.error {
     margin-top: 15px;
     color: rgb(255, 57, 57);
 }
-.success{
+
+.success {
     margin-top: 15px;
     color: rgb(0, 172, 0);
 }
 
+.passwordContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.showPasswordButton {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    color: #666;
+}
+
+.showPasswordButton:focus {
+    outline: none;
+}
