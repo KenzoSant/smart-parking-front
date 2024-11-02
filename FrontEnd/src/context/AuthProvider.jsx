@@ -198,20 +198,25 @@ const AuthProvider = ({ children }) => {
   // Função para realizar pagamento
   const makePayment = async (plate) => {
     const token = localStorage.getItem('token');
+    const paymentData = { plate }; // Dados que serão enviados para a API
+  
+    console.log('Dados enviados para a API:', paymentData); // Exibe os dados no console
+  
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/payments', { plate }, {
+      const response = await axios.post('http://localhost:8080/api/v1/payments', paymentData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+  
       // Adiciona a resposta ao histórico de pagamentos
-      const paymentData = response.data;
-      setPaymentHistory((prevHistory) => [...prevHistory, paymentData]);
+      const paymentResponse = response.data;
+      setPaymentHistory((prevHistory) => [...prevHistory, paymentResponse]);
     } catch (error) {
       console.error('Erro ao processar pagamento:', error);
     }
   };
+  
 
   return (
     <AuthContext.Provider value={{
